@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpeechFlow AI - Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4ade80;
+            --warning-color: #fbbf24;
+            --danger-color: #f87171;
+        }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: var(--dark-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .nav-item {
+            margin: 0 0.2rem;
+        }
+
+        .nav-item .btn-logout {
+            color: var(--danger-color);
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item .btn-logout:hover {
+            background-color: rgba(248, 113, 113, 0.1);
+            border-radius: 4px;
+        }
+
+        .content-wrapper {
+            flex: 1 0 auto;
+        }
+
+        footer {
+            flex-shrink: 0;
+        }
+
+        .avatar-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto;
+        }
+        
+        .session-card {
+            transition: all 0.3s ease;
+        }
+        
+        .session-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--primary-color);">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-comment-dots me-2"></i>
+                SpeechFlow AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('learn_more') }}">
+                            <i class="fas fa-info-circle me-1"></i> About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('profile') }}">
+                            <i class="fas fa-user me-1"></i> Profile
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <span class="nav-link text-light">
+                            <i class="fas fa-user-circle me-1"></i> {{ session['username'] }}
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn-logout" href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt me-1"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <div class="container mt-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h4>User Profile</h4>
+                        </div>
+                        <div class="card-body">
+                            {% if user %}
+                                <div class="text-center mb-3">
+                                    <div class="avatar-circle bg-secondary text-white mb-2">
+                                        {{ user['full_name'][0]|upper if user['full_name'] else 'U' }}
+                                    </div>
+                                    <h3>{{ user['full_name'] or 'User' }}</h3>
+                                    <p class="text-muted">@{{ user['username'] }}</p>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <i class="fas fa-envelope me-2"></i> {{ user['email'] or 'Not provided' }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-phone me-2"></i> {{ user['phone'] or 'Not provided' }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-calendar-alt me-2"></i> 
+                                        Member since: {{ user['created_at'][:10] if user['created_at'] else 'Unknown' }}
+                                    </li>
+                                </ul>
+                            {% else %}
+                                <div class="alert alert-warning">User information not available</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5>Progress Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if sessions and sessions|length > 0 %}
+                                <div class="progress mb-3" style="height: 20px;">
+                                    {% set avg_fluency = (sessions|sum(attribute='fluency_score') / sessions|length * 100) if sessions else 0 %}
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: {{ avg_fluency }}%;" 
+                                         aria-valuenow="{{ avg_fluency }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                        {{ "%.0f"|format(avg_fluency) }}% Fluency
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Sessions Completed:</span>
+                                    <span>{{ sessions|length }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Last Session:</span>
+                                    <span>{{ sessions[0]['session_date'][:10] if sessions[0]['session_date'] else 'None' }}</span>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info">No sessions recorded yet</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-8">
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h4>Session History</h4>
+                                <a href="{{ url_for('index') }}#recording-section" class="btn btn-light">
+                                    <i class="fas fa-plus-circle me-1"></i> Start New Session
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {% if sessions and sessions|length > 0 %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Fluency</th>
+                                                <th>Repetitions</th>
+                                                <th>Prolongations</th>
+                                                <th>Blocks</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for session in sessions %}
+                                            <tr class="session-card">
+                                                <td>{{ session['session_date'][:16] if session['session_date'] else 'Unknown' }}</td>
+                                                <td>
+                                                    <div class="progress" style="height: 20px;">
+                                                        {% set fluency = session['fluency_score'] * 100 if session['fluency_score'] else 0 %}
+                                                        <div class="progress-bar bg-success" role="progressbar" 
+                                                            style="width: {{ fluency }}%;" 
+                                                            aria-valuenow="{{ fluency }}" 
+                                                            aria-valuemin="0" 
+                                                            aria-valuemax="100">
+                                                            {{ "%.0f"|format(fluency) }}%
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>{{ session['repetitions'] if session['repetitions'] else 0 }}</td>
+                                                <td>{{ session['prolongations'] if session['prolongations'] else 0 }}</td>
+                                                <td>{{ session['blocks'] if session['blocks'] else 0 }}</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" 
+                                                            data-bs-target="#sessionModal{{ session['id'] }}">
+                                                        <i class="fas fa-info-circle"></i> Details
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info">
+                                    No sessions recorded yet. <a href="{{ url_for('index') }}">Start your first session</a>.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h4>Progress Chart</h4>
+                        </div>
+                        <div class="card-body">
+                            {% if session_dates and fluency_scores and session_dates|length > 1 %}
+                                <canvas id="progressChart" height="200"></canvas>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const ctx = document.getElementById('progressChart').getContext('2d');
+                                        const chartData = {
+                                            labels: {{ session_dates|tojson|safe }},
+                                            datasets: [
+                                                {
+                                                    label: 'Fluency Score',
+                                                    data: {{ fluency_scores|tojson|safe }},
+                                                    borderColor: '#4361ee',
+                                                    backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                                                    tension: 0.3,
+                                                    fill: true
+                                                }
+                                                {% if repetitions and repetitions|length > 0 %}
+                                                ,{
+                                                    label: 'Repetitions',
+                                                    data: {{ repetitions|tojson|safe }},
+                                                    borderColor: '#fbbf24',
+                                                    backgroundColor: 'rgba(251, 191, 36, 0.1)',
+                                                    tension: 0.3,
+                                                    fill: true
+                                                }
+                                                {% endif %}
+                                            ]
+                                        };
+
+                                        new Chart(ctx, {
+                                            type: 'line',
+                                            data: chartData,
+                                            options: {
+                                                responsive: true,
+                                                maintainAspectRatio: false,
+                                                scales: {
+                                                    y: {
+                                                        beginAtZero: true,
+                                                        max: 100,
+                                                        title: {
+                                                            display: true,
+                                                            text: 'Score'
+                                                        }
+                                                    },
+                                                    x: {
+                                                        title: {
+                                                            display: true,
+                                                            text: 'Date'
+                                                        }
+                                                    }
+                                                },
+                                                plugins: {
+                                                    legend: {
+                                                        position: 'top'
+                                                    },
+                                                    tooltip: {
+                                                        mode: 'index',
+                                                        intersect: false
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    });
+                                </script>
+                            {% else %}
+                                <div class="alert alert-warning">Not enough data to display progress chart</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Session Detail Modals -->
+    {% if sessions and sessions|length > 0 %}
+        {% for session in sessions %}
+        <div class="modal fade" id="sessionModal{{ session['id'] }}" tabindex="-1" aria-labelledby="sessionModalLabel{{ session['id'] }}" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="sessionModalLabel{{ session['id'] }}">
+                            Session Details - {{ session['session_date'][:16] if session['session_date'] else 'Unknown' }}
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Session Metrics</h6>
+                                <ul class="list-group mb-3">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Fluency Score
+                                        <span class="badge bg-primary rounded-pill">
+                                            {{ "%.0f"|format(session['fluency_score'] * 100 if session['fluency_score'] else 0) }}%
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Repetitions
+                                        <span class="badge bg-warning rounded-pill">
+                                            {{ session['repetitions'] if session['repetitions'] else 0 }}
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Prolongations
+                                        <span class="badge bg-info rounded-pill">
+                                            {{ session['prolongations'] if session['prolongations'] else 0 }}
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Blocks
+                                        <span class="badge bg-danger rounded-pill">
+                                            {{ session['blocks'] if session['blocks'] else 0 }}
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Session Analysis</h6>
+                                <div class="card">
+                                    <div class="card-body">
+                                        {% if session['transcription'] %}
+                                            <p><strong>Transcription:</strong></p>
+                                            <p class="text-muted">{{ session['transcription'] }}</p>
+                                        {% else %}
+                                            <p class="text-muted">No transcription available</p>
+                                        {% endif %}
+                                        
+                                        {% if session['notes'] %}
+                                            <p><strong>Notes:</strong></p>
+                                            <p class="text-muted">{{ session['notes'] }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>SpeechFlow AI</h5>
+                    <p>Empowering communication through innovative AI technology.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>&copy; 2023 SpeechFlow AI. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

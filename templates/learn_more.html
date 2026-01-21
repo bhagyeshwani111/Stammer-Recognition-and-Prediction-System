@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn More About Stuttering - SpeechFlow AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .exercise-card {
+            border: none;
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .exercise-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-tracker {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .floating-nav {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            padding: 1rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .floating-nav a {
+            display: block;
+            padding: 0.5rem;
+            color: var(--dark-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .floating-nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .interactive-element {
+            cursor: pointer;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: var(--light-color);
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .interactive-element:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 1rem;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+
+        .comparison-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+        }
+
+        .comparison-table td {
+            padding: 1rem;
+            background: white;
+        }
+
+        .comparison-table tr:nth-child(even) td {
+            background: var(--light-color);
+        }
+
+        .exercise-timer {
+            text-align: center;
+            padding: 2rem;
+            background: var(--light-color);
+            border-radius: 1rem;
+            margin: 1rem 0;
+        }
+
+        .timer-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        @keyframes glowing {
+            0% { box-shadow: 0 0 5px var(--primary-color); }
+            50% { box-shadow: 0 0 20px var(--primary-color); }
+            100% { box-shadow: 0 0 5px var(--primary-color); }
+        }
+
+        @keyframes breatheIn {
+            from {
+                transform: scale(1);
+                background-color: var(--primary-color);
+            }
+            to {
+                transform: scale(1.5);
+                background-color: var(--accent-color);
+            }
+        }
+
+        @keyframes breatheHold {
+            from {
+                transform: scale(1.5);
+                background-color: var(--accent-color);
+            }
+            to {
+                transform: scale(1.5);
+                background-color: var(--secondary-color);
+            }
+        }
+
+        @keyframes breatheOut {
+            from {
+                transform: scale(1.5);
+                background-color: var(--secondary-color);
+            }
+            to {
+                transform: scale(1);
+                background-color: var(--primary-color);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-tracker">
+        <div class="progress-bar" id="readingProgress"></div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--primary-color);">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-comment-dots me-2"></i>
+                SpeechFlow AI
+            </a>
+        </div>
+    </nav>
+
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Understanding Stuttering</h1>
+            <p class="lead">A comprehensive guide to stuttering, its causes, types, and management techniques</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- What is Stuttering Section -->
+                <div class="content-card" id="what-is-stuttering">
+                    <h2>What is Stuttering?</h2>
+                    <p class="lead">Stuttering is a complex communication disorder affecting speech fluency.</p>
+                    <div class="interactive-element" onclick="showInfo('stuttering-details')">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Click to learn more about stuttering
+                    </div>
+                    <div id="stuttering-details" class="mt-3" style="display: none;">
+                        <p>Stuttering affects the fluency of speech, where the flow of words is interrupted by:</p>
+                        <ul>
+                            <li>Involuntary repetitions</li>
+                            <li>Prolongations of sounds</li>
+                            <li>Silent pauses or blocks</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Causes Section -->
+                <div class="content-card" id="causes">
+                    <h2>The Causes of Stuttering</h2>
+                    <div class="interactive-element" onclick="showInfo('causes-details')">
+                        <i class="fas fa-brain me-2"></i>
+                        Explore the factors behind stuttering
+                    </div>
+                    <div id="causes-details" class="mt-3" style="display: none;">
+                        <ul>
+                            <li>Genetic predisposition</li>
+                            <li>Neurological factors</li>
+                            <li>Environmental influences</li>
+                            <li>Developmental delays</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Types of Stuttering -->
+                <div class="content-card" id="types">
+                    <h2>Types of Stuttering</h2>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card exercise-card">
+                                <div class="card-body">
+                                    <h5>Word Repetition</h5>
+                                    <p>Repeating whole words or phrases (e.g., "I-I-I want")</p>
+                                    <div class="mt-2">
+                                        <span class="badge bg-info">Common in children</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card exercise-card">
+                                <div class="card-body">
+                                    <h5>Sound Repetition</h5>
+                                    <p>Repeating individual sounds (e.g., "S-s-sunday")</p>
+                                    <div class="mt-2">
+                                        <span class="badge bg-warning">Needs attention</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card exercise-card">
+                                <div class="card-body">
+                                    <h5>Prolongation</h5>
+                                    <p>Extending sounds (e.g., "Ssssssunday")</p>
+                                    <div class="mt-2">
+                                        <span class="badge bg-primary">Common type</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4 mb-3">
+                            <div class="card exercise-card">
+                                <div class="card-body">
+                                    <h5>Blocks</h5>
+                                    <p>Temporary inability to produce sounds</p>
+                                    <div class="mt-2">
+                                        <span class="badge bg-danger">Most challenging</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card exercise-card">
+                                <div class="card-body">
+                                    <h5>Interjections</h5>
+                                    <p>Adding extra sounds (um, uh, like)</p>
+                                    <div class="mt-2">
+                                        <span class="badge bg-success">Mild form</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card exercise-card">
+                                <div class="card-body">
+                                    <h5>Circumlocution</h5>
+                                    <p>Word substitution to avoid difficult sounds</p>
+                                    <div class="mt-2">
+                                        <span class="badge bg-secondary">Coping mechanism</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Helpful Features Section -->
+                <div class="content-card" id="helpful-features">
+                    <h2>Helpful Features for People Who Stutter</h2>
+                    
+                    <!-- Speech Techniques -->
+                    <div class="feature-section mb-4">
+                        <h4><i class="fas fa-microphone-alt me-2"></i>Speech Techniques</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="card exercise-card">
+                                    <div class="card-body">
+                                        <h5>Paced Speech</h5>
+                                        <p>Speaking at a controlled, rhythmic pace using a metronome or music beat.</p>
+                                        <button class="btn btn-outline-primary mt-2" onclick="startPacedSpeech()">
+                                            Try Paced Speech
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card exercise-card">
+                                    <div class="card-body">
+                                        <h5>Easy Onset</h5>
+                                        <p>Starting sounds gently and gradually to reduce tension.</p>
+                                        <button class="btn btn-outline-primary mt-2" onclick="showEasyOnsetGuide()">
+                                            Learn Easy Onset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Breathing Exercises -->
+                    <div class="feature-section mb-4">
+                        <h4><i class="fas fa-wind me-2"></i>Breathing Exercises</h4>
+                        <div class="exercise-timer mb-3">
+                            <div class="breathing-guide text-center">
+                                <p class="text-muted mb-3">4-2-4 Breathing Meditation</p>
+                                <div id="breathingCircle" class="rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                                    style="width: 150px; height: 150px; background: var(--primary-color); 
+                                    transition: all 1s ease; position: relative; color: white;">
+                                    <span id="breathCount" style="font-size: 2rem; font-weight: bold;">4</span>
+                                </div>
+                                <p id="breathingInstruction" class="mt-3 h5">Click Start to begin breathing exercise</p>
+                                <p class="text-muted mt-2">4s breathe in, 2s hold, 4s breathe out</p>
+                            </div>
+                            <div class="timer-display" id="breathingTimer">00:00</div>
+                            <button class="btn btn-primary mt-3" onclick="toggleBreathing()">Start Breathing Exercise</button>
+                        </div>
+                    </div>
+
+                    <!-- Word Practice -->
+                    <div class="feature-section mb-4">
+                        <h4><i class="fas fa-book-reader me-2"></i>Word Practice</h4>
+                        <div class="practice-words mt-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Practice Words by Difficulty</h5>
+                                    <div class="difficulty-levels">
+                                        <div class="mb-3">
+                                            <h6>Easy Level</h6>
+                                            <div class="d-flex flex-wrap gap-2" id="easyWords">
+                                                <span class="badge bg-success p-2">cat</span>
+                                                <span class="badge bg-success p-2">dog</span>
+                                                <span class="badge bg-success p-2">book</span>
+                                                <span class="badge bg-success p-2">sun</span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <h6>Medium Level</h6>
+                                            <div class="d-flex flex-wrap gap-2" id="mediumWords">
+                                                <span class="badge bg-warning p-2">picture</span>
+                                                <span class="badge bg-warning p-2">simple</span>
+                                                <span class="badge bg-warning p-2">yellow</span>
+                                                <span class="badge bg-warning p-2">window</span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <h6>Challenging Level</h6>
+                                            <div class="d-flex flex-wrap gap-2" id="hardWords">
+                                                <span class="badge bg-danger p-2">particularly</span>
+                                                <span class="badge bg-danger p-2">statistical</span>
+                                                <span class="badge bg-danger p-2">phenomenon</span>
+                                                <span class="badge bg-danger p-2">sophisticated</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Relaxation Techniques -->
+                    <div class="feature-section mb-4">
+                        <h4><i class="fas fa-peace me-2"></i>Relaxation Techniques</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="card exercise-card">
+                                    <div class="card-body">
+                                        <h5>Progressive Muscle Relaxation</h5>
+                                        <p>Systematically tense and relax muscle groups to reduce physical tension.</p>
+                                        <button class="btn btn-outline-primary mt-2" onclick="startRelaxation()">
+                                            Start Relaxation
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card exercise-card">
+                                    <div class="card-body">
+                                        <h5>Mindfulness Practice</h5>
+                                        <p>Focus on the present moment to reduce anxiety about speaking.</p>
+                                        <button class="btn btn-outline-primary mt-2" onclick="startMindfulness()">
+                                            Try Mindfulness
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exercises Section -->
+                <div class="content-card" id="exercises">
+                    <h2>12 Effective Exercises</h2>
+                    <div class="exercise-timer mb-4">
+                        <h4>Practice Timer</h4>
+                        <div class="timer-display" id="timer">00:00</div>
+                        <button class="btn btn-primary mt-3" onclick="toggleTimer()">Start Exercise</button>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card exercise-card">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-lungs me-2"></i>Diaphragmatic Breathing</h5>
+                                    <p>Deep breathing using the diaphragm for better speech control</p>
+                                    <button class="btn btn-outline-primary" onclick="showExerciseDetails('breathing')">
+                                        Learn More
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Add more exercise cards here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="floating-nav d-none d-lg-block">
+                    <h6>Quick Navigation</h6>
+                    <a href="#what-is-stuttering">What is Stuttering</a>
+                    <a href="#causes">Causes</a>
+                    <a href="#types">Types</a>
+                    <a href="#exercises">Exercises</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add this new function at the start of your script section
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Reading Progress
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('readingProgress').style.width = scrolled + '%';
+        });
+
+        // Back to Top Button
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('backToTop');
+            if (window.scrollY > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // Interactive Elements
+        function showInfo(elementId) {
+            const element = document.getElementById(elementId);
+            if (element.style.display === 'none') {
+                element.style.display = 'block';
+            } else {
+                element.style.display = 'none';
+            }
+        }
+
+        // Exercise Timer
+        let timerInterval;
+        let seconds = 0;
+        let isTimerRunning = false;
+
+        function toggleTimer() {
+            const timerDisplay = document.getElementById('timer');
+            const button = event.target;
+
+            if (!isTimerRunning) {
+                button.textContent = 'Stop Exercise';
+                button.classList.replace('btn-primary', 'btn-danger');
+                isTimerRunning = true;
+
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    const minutes = Math.floor(seconds / 60);
+                    const remainingSeconds = seconds % 60;
+                    timerDisplay.textContent = 
+                        `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            } else {
+                button.textContent = 'Start Exercise';
+                button.classList.replace('btn-danger', 'btn-primary');
+                isTimerRunning = false;
+                clearInterval(timerInterval);
+                seconds = 0;
+                timerDisplay.textContent = '00:00';
+            }
+        }
+
+        // Exercise Details Modal
+        function showExerciseDetails(exerciseType) {
+            // Add modal implementation here
+            alert('Exercise details will be shown in a modal');
+        }
+
+        // Paced Speech Feature
+        function startPacedSpeech() {
+            alert('Starting paced speech practice with metronome...');
+            // Implement metronome functionality
+        }
+
+        // Easy Onset Guide
+        function showEasyOnsetGuide() {
+            alert('Showing easy onset technique guide...');
+            // Implement guide modal
+        }
+
+        // Updated Breathing Exercise
+        let isBreathing = false;
+        let breathingInterval;
+        let breathingTimer;
+        let totalSeconds = 0;
+
+        function updateBreathingTimer() {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            document.getElementById('breathingTimer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function toggleBreathing() {
+            const circle = document.getElementById('breathingCircle');
+            const instruction = document.getElementById('breathingInstruction');
+            const breathCount = document.getElementById('breathCount');
+            const button = event.target;
+
+            if (!isBreathing) {
+                button.textContent = 'Stop Exercise';
+                button.classList.replace('btn-primary', 'btn-danger');
+                isBreathing = true;
+
+                // Start the total time counter
+                breathingTimer = setInterval(() => {
+                    totalSeconds++;
+                    updateBreathingTimer();
+                }, 1000);
+
+                function breathingCycle() {
+                    // Breathe In - 4 seconds
+                    circle.style.animation = 'breatheIn 4s forwards';
+                    instruction.textContent = 'Breathe In...';
+                    let count = 4;
+                    breathCount.textContent = count;
+
+                    const inhaleInterval = setInterval(() => {
+                        count--;
+                        if (count > 0) breathCount.textContent = count;
+                    }, 1000);
+
+                    // Hold - 2 seconds
+                    setTimeout(() => {
+                        clearInterval(inhaleInterval);
+                        circle.style.animation = 'breatheHold 2s forwards';
+                        instruction.textContent = 'Hold...';
+                        count = 2;
+                        breathCount.textContent = count;
+
+                        const holdInterval = setInterval(() => {
+                            count--;
+                            if (count > 0) breathCount.textContent = count;
+                        }, 1000);
+
+                        // Breathe Out - 4 seconds
+                        setTimeout(() => {
+                            clearInterval(holdInterval);
+                            circle.style.animation = 'breatheOut 4s forwards';
+                            instruction.textContent = 'Breathe Out...';
+                            count = 4;
+                            breathCount.textContent = count;
+
+                            const exhaleInterval = setInterval(() => {
+                                count--;
+                                if (count > 0) breathCount.textContent = count;
+                            }, 1000);
+
+                            setTimeout(() => {
+                                clearInterval(exhaleInterval);
+                                if (isBreathing) breathingCycle();
+                            }, 4000);
+                        }, 2000);
+                    }, 4000);
+                }
+
+                breathingCycle();
+            } else {
+                button.textContent = 'Start Breathing Exercise';
+                button.classList.replace('btn-danger', 'btn-primary');
+                isBreathing = false;
+                clearInterval(breathingTimer);
+                circle.style.animation = 'none';
+                circle.style.transform = 'scale(1)';
+                circle.style.backgroundColor = 'var(--primary-color)';
+                instruction.textContent = 'Click Start to begin breathing exercise';
+                breathCount.textContent = '4';
+            }
+        }
+
+        // Relaxation Feature
+        function startRelaxation() {
+            alert('Starting progressive muscle relaxation guide...');
+            // Implement relaxation guide
+        }
+
+        // Mindfulness Feature
+        function startMindfulness() {
+            alert('Starting mindfulness session...');
+            // Implement mindfulness guide
+        }
+    </script>
+</body>
+</html> 
